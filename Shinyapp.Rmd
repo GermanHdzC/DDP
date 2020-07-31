@@ -1,0 +1,75 @@
+---
+title: "Stock Markets Application"
+author: "Germán Hernández"
+date: "31/7/2020"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Summary
+This is a very simple application that use yahoo to construct and show some american stock market graphs since 2017-01-03. You can choose between:
+
+- Apple
+- Cisco
+- IBM
+- Facebook
+- Twitter
+- Microsoft and
+- Google
+
+## Reproducible Pitch
+
+This is a task for the data science coursera course about developing data products for week 4. As part of this, I have created a shiny app and deployed it on the shiny server. The link is https://germanhdzc.shinyapps.io/Stockmarket/. The code can be found at https://github.com/GermanHdzC/DDP.
+
+## UI code
+
+```{r cars, echo = TRUE, eval=FALSE}
+library(shiny)
+library(quantmod)
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+    
+    # Application title
+    titlePanel("Mercados con R"),
+    
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel("Seleccione las acciones que desee consultar",
+                     selectInput("accion",
+                                 label="Acción",
+                                 choices=c("Apple"="AAPL",                                      "Cisco"="CSCO",
+                                           "Cisco"="CSCO",
+                                           "IBM"="IBM",
+                                           "Facebook"="FB",
+                                           "Twitter"="TWTR",
+                                           "Microsoft"="MSFT",
+                                           "Google"="GOOG"))
+        ),
+        
+        # Show a plot of the generated distribution
+        mainPanel("Gráfico de acciones del mercado de valores Americano",
+                  plotOutput("grafico")
+        )
+    )
+)
+```
+
+## Server code
+
+```{r, echo=TRUE, eval=FALSE}
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+    
+    output$grafico = renderPlot({
+        stockdata = getSymbols(input$accion, src="yahoo",
+                               auto.assign=FALSE)
+        candleChart(stockdata, name=input$accion)
+    })
+}
+
+```
+
